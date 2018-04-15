@@ -75,6 +75,7 @@ public class BaseTests {
 			check = check && sortedArr.get(0).getWord().equals(frequent_word) && sortedArr.get(1).getWord().equals(firstWord);
 			check = check && sortedArr.size() == outWlistLimit;
 		} catch (Exception e) {
+			check = false;
 			System.out.println(e.getMessage());
 		}
 		assertTrue(check);
@@ -130,7 +131,7 @@ public class BaseTests {
 		} catch (FSException e) {
 			System.out.println(e.getMessage());
 			if (e.getErrorMsg().equals(FSExcEnum.EXC_FILE_EXTENSION.getMsg()))
-				check = true;
+				check = true; //file to reject correctly identified
 		} catch (Exception e1) {
 			System.out.println(e1.getMessage());
 		} finally {
