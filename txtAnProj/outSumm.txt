@@ -1,0 +1,17 @@
+scanned path -> Resources\GPS_nmea.log
+GPRMC -> 7
+GPGGA -> 6
+GPGSA -> 6
+3F -> 5
+GPVTG -> 5
+GPGSV -> 3
+ADVER -> 1
+4P -> 1
+6C -> 1
+3C -> 1
+
+total lines scanned 31
+total words increments 44
+total words discarded 475
+
+files excluded due to exception: 

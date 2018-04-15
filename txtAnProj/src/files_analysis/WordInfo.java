@@ -43,8 +43,8 @@ public class WordInfo implements Comparable<WordInfo>{
 	/**
 	 * Increment the number of occurrences of the string word
 	 */
-	void incrWCount() {
-		++(this.count);
+	int incrWCount() {
+		return (++this.count);
 	}
 
 	/**

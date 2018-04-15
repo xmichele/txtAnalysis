@@ -16,11 +16,20 @@ public class FileScan {
 	private static final String defaulSplPattern = "\\W+";
 	private String splPattern;
 
+	/**
+	 * Constructor
+	 * @param splPattern
+	 * @throws Exception
+	 */
 	public FileScan(String splPattern) throws Exception {
 		this.splPattern = checkSplPattern(splPattern);
 	}
 
-	FileScan() throws Exception {
+	/**
+	 * Constructor
+	 * @throws Exception
+	 */
+	public FileScan() throws Exception {
 		this(defaulSplPattern);
 	}
 
@@ -43,13 +52,11 @@ public class FileScan {
 				// System.out.println("line " + line);
 				String[] words = splittingExec(line);
 				// System.out.println("words " + words.toString());
-				WordInfo winfo = null;
+				Integer winfo_cnt = null;
 				for (String word : words) {
 					if (checkWordInterest(word, excludedWords)) {
-						winfo = sInfos.getWInfo(word);
-						if (winfo != null) {
-							winfo.incrWCount();
-						} else {
+						winfo_cnt = sInfos.incrWInfo(word);
+						if (winfo_cnt == null) {
 							sInfos.addNewWInfo(word);
 						}
 						sInfos.incrTotalWincr();
@@ -106,7 +113,7 @@ public class FileScan {
 	 * @param str
 	 * @return
 	 */
-	private String[] splittingExec(String str) {
+	String[] splittingExec(String str) {
 		return str.split(this.splPattern);
 	}
 
@@ -118,7 +125,7 @@ public class FileScan {
 	 * @throws Exception
 	 */
 	private String checkSplPattern(String str) throws Exception {
-		return str;// TODO add check pattern logics
+		return str;//pattern check logics could be added
 	}
 
 	/**
@@ -129,9 +136,9 @@ public class FileScan {
 	 * @param excludedWords
 	 * @return
 	 */
-	private boolean checkWordInterest(final String word, HashSet<String> excludedWords) {
-		// TODO some personalizations can be enabled for user
-		return (word != null && !word.equals("") && word.toCharArray().length >= 2 && !word.matches("\\d+") && !excludedWords.contains(word));
+	boolean checkWordInterest(final String word, HashSet<String> excludedWords) {
+		//  some personalizations could be be enabled for user
+		return (word != null && word.toCharArray().length >= 2 && !word.matches("\\d+") && !excludedWords.contains(word));
 	}
 
 }

@@ -82,13 +82,12 @@ public class SummaryInfos {
 	/**
 	 *
 	 * @param kword
-	 * @return the wInfo related element if the word with the same name is
-	 *         present
+	 * @return the incremented counter of found Winfo element, othewise null
 	 */
-	WordInfo getWInfo(String kword) {
+	Integer incrWInfo(String kword) {
 		for (WordInfo winfo : alWinfo) {
 			if (winfo.getWord().equals(kword)) {
-				return winfo;
+				return winfo.incrWCount();
 			}
 		} // END FOR
 		return null;
@@ -109,7 +108,7 @@ public class SummaryInfos {
 	 * @return the summary string
 	 */
 	String getResult(int limit) {
-		ArrayList<WordInfo> redAlWinfo = new ArrayList<WordInfo>(alWinfo.subList(0, limit));
+		ArrayList<WordInfo> redAlWinfo = getWInfoArr(limit);
 		StringBuilder sb = new StringBuilder();
 		for (WordInfo winfo : redAlWinfo) {
 			sb.append(winfo.toString() + '\n');
@@ -119,6 +118,16 @@ public class SummaryInfos {
 		sb.append("\ntotal words increments " + this.getTotalWincr());
 		sb.append("\ntotal words discarded " + this.getTotalWdiscarded());
 		return sb.toString();
+	}
+
+	/**
+	 * Return a fresh instance of the sorted array of wordInfo
+	 * 
+	 * @param limit
+	 * @return
+	 */
+	ArrayList<WordInfo> getWInfoArr(int limit) {
+		return new ArrayList<WordInfo>(alWinfo.subList(0, limit));
 	}
 
 	/**
@@ -132,5 +141,5 @@ public class SummaryInfos {
 			}
 		});
 	}
-
+	
 }// END CLASS

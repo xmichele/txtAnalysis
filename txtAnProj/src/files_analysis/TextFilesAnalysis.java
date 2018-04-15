@@ -15,11 +15,13 @@ import java.util.HashSet;
  *
  */
 public class TextFilesAnalysis {
-	private  SummaryInfos sInfos = new SummaryInfos();
+	private SummaryInfos sInfos = new SummaryInfos();
 	private String scannedPath = "";
 	private HashSet<String> scannedFwithExc = new HashSet<>();
-	private static final String default_in_path = "C:\\Users\\Michele.LONGOBARDO\\Desktop";
-	private static final String default_out_path = ".\\outSumm.txt";
+	public static final String default_in_path = "C:\\Users\\Michele.LONGOBARDO\\Desktop";
+	public static final String default_out_path = ".\\outSumm.txt";
+	public static final boolean overwriteOLD_outF = true;
+	public static final int sortedWListOutputLimit = 10; 
 	
 	/**
 	 * Use case
@@ -32,19 +34,20 @@ public class TextFilesAnalysis {
 		if (args != null) {
 			int args_size = args.length;
 			if (args_size >= 2) {
-				in_path = args[0];// TODO param (extension needed
+				in_path = args[0];
 				out_path = args[1];
 			}
 		}
-		final HashSet<String> excludedWords = new HashSet<>(); // TODO params (i.e. by cmd  line args)
+		final HashSet<String> excludedWords = new HashSet<>();
+		// in a future release user could specify excluded words (i.e. input by cmd line)
 		TextFilesAnalysis txtAn = new TextFilesAnalysis();
 		txtAn.executeScan(in_path, excludedWords);
-		String report = txtAn.getResult(10);
+		String report = txtAn.getResult(sortedWListOutputLimit);
 		System.out.println(report);
 		try {
-			txtAn.writeResult(out_path, 10);
+			txtAn.writeResult(out_path, sortedWListOutputLimit);
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("IOException: " + e.getMessage());
 		}
 	} // end main
 
@@ -64,7 +67,7 @@ public class TextFilesAnalysis {
 			System.out.println("f " + f.toString());
 			scanFile(f, sInfos, excludedWords);
 		} else if (f.isDirectory()) {
-			//the multi-depthLevel scanning feature could be provided
+			//can be expanded with the multi-depthLevel scanning feature
 			File[] files = f.listFiles();
 			for (File file : files) {
 				scanFile(file, sInfos, excludedWords);
@@ -77,6 +80,7 @@ public class TextFilesAnalysis {
 	/**
 	 * 
 	 * @param limit
+	 *            of the first elements of the sorted list
 	 * @return the summary String
 	 */
 	public synchronized String getResult(int limit) {
@@ -85,6 +89,7 @@ public class TextFilesAnalysis {
 
 	/**
 	 * Write the summary to output file
+	 * 
 	 * @param outFpath_str
 	 * @param limit
 	 * @throws IOException
@@ -92,33 +97,34 @@ public class TextFilesAnalysis {
 	public synchronized void writeResult(final String outFpath_str, int limit) throws IOException {
 		Path outFpath = Paths.get(outFpath_str);
 		File file = new File(outFpath.toString());
-		file.delete();
-		//file.createNewFile();TODO new File .delete (if exsists...)
+		if (overwriteOLD_outF) {
+			file.delete();
+		}
 		System.out.println("Writing summary to " + outFpath);
-		String outStr = ("scanned path -> " + this.scannedPath + "\n" + getResult(limit) + "\n\nfiles excluded due to exception: " + getExcScannedFList());
-		Files.write(outFpath, outStr.getBytes());//AutoCreation if not exsist
-
+		String outStr = ("scanned path -> " + this.scannedPath + "\n" + getResult(limit) + "\n\nfiles excluded due to exception: "
+				+ getExcScannedFList());
+		Files.write(outFpath, outStr.getBytes());// AutoCreated if not exsist
 	}
 
 	/**
-	 * TODO
-	 * 
-	 * @param f
+	 * Scan the input file and update the input SummaryInfos 
+	 * @param file
 	 * @param hmap
 	 * @param excludedWords
 	 */
-	private void scanFile(final File f, final SummaryInfos sInfos, final HashSet<String> excludedWords) {
+	private void scanFile(final File file, final SummaryInfos sInfos, final HashSet<String> excludedWords) {
 		try {
 			FileScan fscan = new FileScan();
-			fscan.scanFile(f, sInfos, excludedWords);
+			fscan.scanFile(file, sInfos, excludedWords);
 		} catch (Exception e) {
-			scannedFwithExc.add(f.getName());
-			System.out.println(f.getName() + e.getMessage());
+			scannedFwithExc.add(file.getName());
+			System.out.println(file.getName() + e.getMessage());
 		}
 	}
 
 	/**
 	 * Get the String list of the files excluded by exception in the last scan
+	 * 
 	 * @return
 	 */
 	private String getExcScannedFList() {
@@ -129,4 +135,4 @@ public class TextFilesAnalysis {
 		return sb.toString();
 	}
 
-} //END CLASS
+} // END CLASS
